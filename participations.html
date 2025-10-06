@@ -27,7 +27,7 @@ layout: default
                     <td class="text-center" style="vertical-align: middle;" rowspan="{{ page[year].count }}">{{ year }}</td>
                     {% endif %}
                     <td>
-                        <a href="{% if page.lang == "en" %}/en{% endif %}/participations/{{olyid}}">
+                        <a href="{% if page.lang != site.data.build.primary_lang %}/{{ page.lang }}{% endif %}/olympiads/{{page[year][idx].name}}/{{year}}">
                             {% if page.lang == "en" %}  
                                 {{ page[year][idx].enname }}
                             {% else %}

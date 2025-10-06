@@ -9,8 +9,12 @@ id: olympiads
         <div class="card">
             <div class="card-body">
                 <h5 class="card-title">
-                    {% if page.lang == "en" %} {{ page.olympiads[i].enname }} {% else %} {{ page.olympiads[i].arname }} {% endif %}
-                    ({{ page.olympiads[i].id | upcase }})
+                    {%- comment -%}
+                    <a href="{% if page.lang != site.data.build.primary_lang %}/{{ page.lang }}{% endif %}/olympiads/{{page.olympiads[i].id}}/">
+                    {%- endcomment -%}
+                        {% if page.lang == "en" %} {{ page.olympiads[i].enname }} {% else %} {{ page.olympiads[i].arname }} {% endif %}
+                        ({{ page.olympiads[i].id | upcase }})
+                    <!-- </a> -->
                 </h5>
                 {% if page.olympiads[i].website != null %}
                 <p class="card-text">
