@@ -58,6 +58,7 @@ layout: base
 <script>
 if (getCookie('debugger') == 'iReadTheSource') {
     document.querySelectorAll('.debug-only').forEach(div => {
+        div.classList.remove('debug-only');
         div.classList.remove('d-none');
     });
 }
