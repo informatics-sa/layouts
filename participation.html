@@ -2,72 +2,69 @@
 layout: default
 ---
 
-<div class="row">
-    <div class="col p-1">
-        <h1>
-            {% if page.lang == "en" %}  
-                {{ page.olympiad_enname }} 
-            {% else %}
-                {{ page.olympiad_arname }}
-            {% endif %}
+<div class="row mt-3 justify-content-end">
+    <h2>
+        {% if page.lang == "en" %}  
+            {{ page.olympiad_enname }} 
+        {% else %}
+            {{ page.olympiad_arname }}
+        {% endif %}
 
-            ({{ page.olympiad | upcase }})
-        </h1>
-        <div class="card" style="width: 18rem;">
+        ({{ page.olympiad | upcase }})
+    </h2>
+</div>
+<div class="row">
+    <div class="col-sm-12 col-md-3 p-1">
+        <div class="card" style="width: 100%;">
             <ul class="list-group list-group-flush">
-                {% if page.lang == "en" %}
-                    <li class="list-group-item">Start: {{ page.start_date }}</li>
-                    <li class="list-group-item">End: {{ page.end_date }}</li>
-                    <li class="list-group-item">
-                        Host: {{ page.country_enname }}
-                        {% if page.online %}
-                        <span class="badge bg-secondary">Online 🌐</span>
-                        {% endif %}
-                    </li>
-                    {% if page.website %}
-                    <li class="list-group-item">Website: <a href="{{ page.website }}">{{ page.website }}</a></li>
+                <li class="list-group-item">{{site.data[page.lang].start}}: {{ page.start_date }}</li>
+                <li class="list-group-item">{{site.data[page.lang].end}}: {{ page.end_date }}</li>
+                <li class="list-group-item">
+                    {{site.data[page.lang].host_country}}: {% if page.lang == "ar" %}{{ page.country_arname }}{% else %}{{ page.country_enname }}{% endif %}
+                    {% if page.online %}
+                    <span class="badge bg-secondary">{{site.data[page.lang].online}} 🌐</span>
                     {% endif %}
-                {% else %}
-                    <li class="list-group-item">البداية: {{ page.start_date }}</li>
-                    <li class="list-group-item">النهاية: {{ page.end_date }}</li>
-                    <li class="list-group-item">
-                        الاستضافة: {{ page.country_arname }}
-                        {% if page.online %}
-                        <span class="badge bg-secondary">عن بعد 🌐</span>
-                        {% endif %}
-                    </li>
-                    {% if page.website %}
-                    <li class="list-group-item">الموقع: <a href="{{ page.website }}">{{ page.website }}</a></li>
-                    {% endif %}
+                </li>
+                {% if page.website %}
+                <li class="list-group-item">
+                    {{site.data[page.lang].website}}: 
+                    <a dir="ltr" href="{{ page.website }}">{{ page.website | remove_first: "https://" | remove_first: "http://" }}</a>
+                </li>
                 {% endif %}
             </ul>
         </div>
-        <ul>
-
-            
-        </ul>
     </div>
-    <div class="col p-1">
-        <table class="table table-bordered table-striped">
+    <div class="col-sm-12 col-md-6 p-1">
+        <table class="table table-bordered">
             <thead>
-                <th>{% if page.lang == "en" %} Rank {% else %} الترتيب {% endif %}</th>
-                <th>{% if page.lang == "en" %} Name {% else %} الاسم {% endif %}</th>
-                <th>{% if page.lang == "en" %} Award {% else %} الجائزة {% endif %}</th>
+                <th width="5%">#</th>
+                <th>{{ site.data[page.lang].name }}</th>
+
+                {% if page.scores %}
+                    {% assign tmp = page.scores | first %}
+                    {% assign pcnt = tmp[1].count %}
+                    {% for p in (1..pcnt) %}
+                    <th width="5%">P{{p}}</th>
+                    {% endfor %}
+                    <th width="5%">{{ site.data[page.lang].sum }}</th>
+                {% endif %}
             </thead>
             <tbody>
                 {% for i in (1..page.participants.count) %}
-                <tr>
-                    <td>{{ i }}</td>
-                    <td>
-                        {% if page.lang == "en" %}
-                        <a href="/en/members/{{ page.participants[i].id }}">{{ page.participants[i].name }}</a>
-                        {% else %}
-                        <a href="/members/{{ page.participants[i].id }}">{{ page.participants[i].name }}</a>
-                        {% endif %}
+                <tr style="background-color: var(--medal-{{ page.participants[i].award }}) !important;">
+                    {% assign uid = page.participants[i].id | plus: 0 %}
+                    <td class="text-center" style="background-color: inherit;">{{ i }}</td>
+                    <td style="background-color: inherit;">
+                        <a href="/{% if page.lang != site.data.build.primary_lang %}{{ page.lang }}/{% endif %}members/{{ uid }}">{{ page.participants[i].name }}</a>
                     </td>
-                    <td>
-                        {{ page.participants[i].award }}
-                    </td>
+                    {% assign sum = 0 %}
+                    {% if page.scores %}
+                        {% for p in (1..pcnt) %}
+                        <td style="background-color: inherit;">{{ page.scores[uid][p] }}</th>
+                        {% assign sum = sum | plus: page.scores[uid][p]  %}
+                        {% endfor %}
+                    {% endif %}
+                    <td style="background-color: inherit;"><b>{{ sum | round: 2 }}</b></td>
                 </tr>
                 {% endfor %}
             </tbody>

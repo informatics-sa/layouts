@@ -14,14 +14,8 @@ layout: default
 <table class="table table-striped table-bordered">
     <thead>
         <th>#</th>
-        {% if page.lang == "en" %} 
-        <th>Name</th>
-        <th>Sum</th>
-        {% else %}
-        <th>الاسم</th>
-        <th>المجموع</th>
-        {% endif %}
-
+        <th>{{site.data[page.lang].name}}</th>
+        <th>{{site.data[page.lang].sum}}</th>
         {% for probidx in (1..page.exam.problems.count) %}
         <th>{{ page.exam.problems[probidx] }}</th>
         {% endfor %}
