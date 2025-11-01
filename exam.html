@@ -8,6 +8,9 @@ layout: default
         {% if page.exam.date %}
         <h2>{{ page.exam.date }}</h2>
         {% endif %}
+        {% if page.exam.url %}
+        <h2><a href="{{ page.exam.url }}">Upsolve link</a></h2>
+        {% endif %}
     </div>
 </div>
 
