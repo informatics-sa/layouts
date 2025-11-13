@@ -73,14 +73,9 @@ layout: default
         <div class="tab-pane fade {% if forloop.index == 1 %} show active {% endif %}" id="nav-{{oly}}" role="tabpanel" aria-labelledby="nav-{{oly}}-tab" tabindex="0">
             <table class="table table-bordered table-striped">
                 <thead>
-                    <th>#</th>
-                    {% if page.lang == "en" %} 
-                    <th>Name</th>
-                    <th>Sum</th>
-                    {% else %}
-                    <th>الاسم</th>
-                    <th>المجموع</th>
-                    {% endif %}
+                    <th width="5%">#</th>
+                    <th>{{ site.data[page.lang].name }}</th>
+                    <th width="5%">{{ site.data[page.lang].sum }}</th>
                     
                     {% for idx in (1..val.exams.count) %}
                     <th width="15%">
@@ -95,24 +90,10 @@ layout: default
                     {% assign uid = j[0] %} 
                     {% assign res = j[1] %}
 
-                    <tr>
-                        <td>{{ forloop.index }}</td>
-                        <td>
-                            <!-- TODO: Better design for this -->
-                            {% if forloop.index <= val.participants_count %}
-                                {% if page.lang == "en"%}
-                                <span class="badge bg-success">Selected</span>
-                                {% else %}
-                                <span class="badge bg-success">مرشح</span>
-                                {% endif %}
-                            {% endif %}
-                            
-                            
-                            {% if page.lang == "en" %}
-                            <a href="/en/members/{{ j[0] }}">{{ page.names[uid] }}</a>
-                            {% else %}
-                            <a href="/members/{{ j[0] }}">{{ page.names[uid] }}</a>
-                            {% endif %}
+                    <tr style="background-color: var(--bs-success) !important;">
+                        <td style="background-color: inherit;">{{ forloop.index }}</td>
+                        <td style="background-color: inherit;">
+                            <a href="{% if page.lang != site.data.build.primary_lang %}/{{ page.lang }}{% endif %}/members/{{ j[0] }}">{{ page.names[uid] }}</a>
                         </td>
                         <td>
                             {{ res[1] | round: 3 }}
