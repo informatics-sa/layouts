@@ -18,24 +18,6 @@ layout: default
 
     <div class="col d-none debug-only">
         <div class="form-check">
-            <input class="form-check-input" type="checkbox" value="" id="show_averages">
-            <label class="form-check-label" for="show_averages">
-                {{ site.data[page.lang].show_averages }}
-            </label>
-        </div>
-        <div class="form-check">
-            <input class="form-check-input" type="checkbox" value="" id="show_maximums">
-            <label class="form-check-label" for="show_maximums">
-                {{ site.data[page.lang].show_maximums }}
-            </label>
-        </div>
-        <div class="form-check">
-            <input class="form-check-input" type="checkbox" value="" id="show_medians">
-            <label class="form-check-label" for="show_medians">
-                {{ site.data[page.lang].show_medians }}
-            </label>
-        </div>
-        <div class="form-check">
             <input class="form-check-input" type="checkbox" value="" id="show_distincts">
             <label class="form-check-label" for="show_distincts">
                 {{ site.data[page.lang].show_distincts }}
@@ -47,6 +29,29 @@ layout: default
                 {{ site.data[page.lang].show_stddevs }}
             </label>
         </div>
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="" id="show_medians">
+            <label class="form-check-label" for="show_medians">
+                {{ site.data[page.lang].show_medians }}
+            </label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="" id="show_averages">
+            <label class="form-check-label" for="show_averages">
+                {{ site.data[page.lang].show_averages }}
+            </label>
+        </div>
+        
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="" id="show_maximums">
+            <label class="form-check-label" for="show_maximums">
+                {{ site.data[page.lang].show_maximums }}
+            </label>
+        </div>
+        
+        
+        
+        
     </div>
 </div>
 
@@ -71,14 +76,14 @@ layout: default
         {% assign oly = i[0] %}
         {% assign val = i[1] %}
         <div class="tab-pane fade {% if forloop.index == 1 %} show active {% endif %}" id="nav-{{oly}}" role="tabpanel" aria-labelledby="nav-{{oly}}-tab" tabindex="0">
-            <table class="table table-bordered table-striped">
+            <table sortable class="table table-bordered table-striped">
                 <thead>
                     <th width="5%">#</th>
-                    <th>{{ site.data[page.lang].name }}</th>
-                    <th width="5%">{{ site.data[page.lang].sum }}</th>
+                    <th sort-value="string">{{ site.data[page.lang].name }}</th>
+                    <th sort-value="num" width="5%" class="text-center">{{ site.data[page.lang].sum }}</th>
                     
                     {% for idx in (1..val.exams.count) %}
-                    <th width="15%">
+                    <th sort-value="num" width="12%" class="text-center">
                         {% assign eid = val.exams[idx] %}
                         <a href="{%if page.lang=="en"%}/en{%endif%}/exams/{{ eid }}">{{ page.exam_names[eid] }}</a>
                     </th>
@@ -90,16 +95,16 @@ layout: default
                     {% assign uid = j[0] %} 
                     {% assign res = j[1] %}
 
-                    <tr style="background-color: var(--bs-success) !important;">
+                    <tr {% if forloop.index <= val.participants_count %} style="background-color: #82f482 !important;" {% endif %}>
                         <td style="background-color: inherit;">{{ forloop.index }}</td>
                         <td style="background-color: inherit;">
                             <a href="{% if page.lang != site.data.build.primary_lang %}/{{ page.lang }}{% endif %}/members/{{ j[0] }}">{{ page.names[uid] }}</a>
                         </td>
-                        <td>
-                            {{ res[1] | round: 3 }}
+                        <td style="background-color: inherit;" class="text-center">
+                            <b>{{ res[1] | round: 3 }}</b>
                         </td>
                         {% for k in (2..res.count) %}
-                        <td>
+                        <td style="background-color: inherit;" class="text-center">
                             {{ res[k] | round: 3 }}
                         </td>
                         {% endfor %}
@@ -111,5 +116,5 @@ layout: default
     {% endfor %}
 </div>
 
-
+<script src="/resources/sortable.js"></script>
 <script src="/resources/modal_settings.js"></script>

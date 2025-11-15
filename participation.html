@@ -35,18 +35,18 @@ layout: default
         </div>
     </div>
     <div class="col-sm-12 col-md-6 p-1">
-        <table class="table table-bordered">
+        <table sortable class="table table-bordered">
             <thead>
                 <th width="5%">#</th>
-                <th>{{ site.data[page.lang].name }}</th>
+                <th sort-value="string">{{ site.data[page.lang].name }}</th>
 
                 {% if page.scores %}
                     {% assign tmp = page.scores | first %}
                     {% assign pcnt = tmp[1].count %}
                     {% for p in (1..pcnt) %}
-                    <th width="5%">P{{p}}</th>
+                    <th sort-value="num" width="5%">P{{p}}</th>
                     {% endfor %}
-                    <th width="5%">{{ site.data[page.lang].sum }}</th>
+                    <th sort-value="num" width="5%">{{ site.data[page.lang].sum }}</th>
                 {% endif %}
             </thead>
             <tbody>
@@ -71,3 +71,4 @@ layout: default
         </table>
     </div>
 </div>
+<script src="/resources/sortable.js"></script>
