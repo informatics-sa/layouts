@@ -53,6 +53,7 @@ usechartjs: false
                     <th>{{ site.data[page.lang].name }}</th>
                     <th>{{ site.data[page.lang].date }}</th>
                     <th>{{ site.data[page.lang].sum }}</th>
+                    <th>{{ site.data[page.lang].rank }}</th>
                 </thead>
                 <tbody>
                     {% for i in (1..page.exams.count) %}
@@ -60,6 +61,7 @@ usechartjs: false
                         <td><a href="{% if page.lang != site.data.build.primary_lang %}/{{ page.lang }}{% endif %}/exams/{{ page.exams[i].exam.id }}">{{ page.exams[i].exam.name }}</a></td>
                         <td>{{ page.exams[i].exam.date }}</td>
                         <td>{{ page.exams[i].sum | round: 2 }}</td>
+                        <td>{{ page.exams[i].rank }}</td>
                     </tr>
                     {% endfor %}
                 </tbody>
