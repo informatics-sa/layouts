@@ -330,7 +330,7 @@ layout: default
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script>
-const IS_ARABIC = {{ page.lang == "ar" | jsonify }};
+const IS_ARABIC = getCurLang() == "ar";
 const STUDENT_COLORS = ['#f44336', '#4CAF50', '#2196F3', '#FFC107', '#9C27B0'];
 let allPeople = [];
 let allExams = {};
