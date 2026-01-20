@@ -10,7 +10,7 @@ layout: default
 }
 
 .student-input-section {
-    background: white;
+    /* background: white; */
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
@@ -52,7 +52,7 @@ layout: default
     top: 100%;
     left: 0;
     right: 0;
-    background: white;
+    background-color: var(--bs-body-bg);
     border: 1px solid #ddd;
     border-top: none;
     max-height: 200px;
@@ -68,7 +68,7 @@ layout: default
 }
 
 .autocomplete-item:hover {
-    background-color: #f5f5f5;
+    background-color: var(--bs-secondary-bg);
 }
 
 .color-indicator {
@@ -126,7 +126,7 @@ layout: default
 }
 
 .weights-section {
-    background: white;
+    /* background: white; */
     padding: 15px;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
@@ -151,7 +151,7 @@ layout: default
 }
 
 .weights-table th {
-    background-color: #f5f5f5;
+    /* background-color: #f5f5f5; */
     font-weight: bold;
     font-size: 12px;
 }
@@ -165,7 +165,7 @@ layout: default
 }
 
 .results-section {
-    background: white;
+    /* background: white; */
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
@@ -184,7 +184,7 @@ layout: default
 }
 
 .scores-table th {
-    background-color: #f5f5f5;
+    /* background-color: #f5f5f5; */
     font-weight: bold;
 }
 
@@ -203,14 +203,14 @@ layout: default
     color: #f44336;
     padding: 10px;
     margin-top: 10px;
-    background-color: #ffebee;
+    /* background-color: #ffebee; */
     border-radius: 4px;
 }
 
 .loading {
     text-align: center;
     padding: 20px;
-    color: #666;
+    /* color: #666; */
 }
 
 .hidden {
@@ -332,6 +332,10 @@ layout: default
 <script>
 const IS_ARABIC = getCurLang() == "ar";
 const STUDENT_COLORS = ['#f44336', '#4CAF50', '#2196F3', '#FFC107', '#9C27B0'];
+
+const MIN_NUM = 2;
+const MAX_NUM = 5;
+
 let allPeople = [];
 let allExams = {};
 let allOlympiads = {};
@@ -394,13 +398,19 @@ function buildWeightsTable() {
         const row = document.createElement('tr');
         const displayName = olympiad.id.toUpperCase();
         
+        let values = [100, 50, 25, 10, 5];
+        if (displayName == 'NAOI')
+            values = [30, 20, 10, 5, 2];
+        if (displayName == 'BOI' || displayName == 'JBOI' || displayName == 'EJOI' || displayName == 'EGOI')
+            values = [50, 30, 20, 10, 5];
+
         row.innerHTML = `
-            <td style="font-size: 11px;">${displayName}</td>
-            <td><input type="number" class="weight-input" data-olympiad="${olympiad.id}" data-award="gold" value="100" min="0" onchange="compareStudents()"></td>
-            <td><input type="number" class="weight-input" data-olympiad="${olympiad.id}" data-award="silver" value="50" min="0" onchange="compareStudents()"></td>
-            <td><input type="number" class="weight-input" data-olympiad="${olympiad.id}" data-award="bronze" value="25" min="0" onchange="compareStudents()"></td>
-            <td><input type="number" class="weight-input" data-olympiad="${olympiad.id}" data-award="hm" value="10" min="0" onchange="compareStudents()"></td>
-            <td><input type="number" class="weight-input" data-olympiad="${olympiad.id}" data-award="participation" value="5" min="0" onchange="compareStudents()"></td>
+            <td style="font-size: 12px;">${displayName}</td>
+            <td><input type="number" class="weight-input" data-olympiad="${olympiad.id}" data-award="gold" value="${values[0]}" min="0" onchange="compareStudents()"></td>
+            <td><input type="number" class="weight-input" data-olympiad="${olympiad.id}" data-award="silver" value="${values[1]}" min="0" onchange="compareStudents()"></td>
+            <td><input type="number" class="weight-input" data-olympiad="${olympiad.id}" data-award="bronze" value="${values[2]}" min="0" onchange="compareStudents()"></td>
+            <td><input type="number" class="weight-input" data-olympiad="${olympiad.id}" data-award="hm" value="${values[3]}" min="0" onchange="compareStudents()"></td>
+            <td><input type="number" class="weight-input" data-olympiad="${olympiad.id}" data-award="participation" value="${values[4]}" min="0" onchange="compareStudents()"></td>
         `;
         
         tbody.appendChild(row);
@@ -411,7 +421,7 @@ function addStudentInput() {
     const container = document.getElementById('studentInputs');
     const currentCount = container.children.length;
     
-    if (currentCount >= 5) {
+    if (currentCount >= MAX_NUM) {
         showError(t.maxStudents);
         return;
     }
@@ -434,19 +444,19 @@ function addStudentInput() {
                    onfocus="handleStudentInput(${index})">
             <div class="autocomplete-dropdown hidden" id="dropdown${index}"></div>
         </div>
-        ${currentCount >= 2 ? `<button class="remove-btn" onclick="removeStudentInput(${index})">×</button>` : ''}
+        ${currentCount >= MIN_NUM ? `<button class="remove-btn" onclick="removeStudentInput(${index})">×</button>` : ''}
     `;
     
     container.appendChild(row);
     
-    document.getElementById('addStudentBtn').disabled = currentCount + 1 >= 5;
+    document.getElementById('addStudentBtn').disabled = currentCount + 1 >= MAX_NUM;
 }
 
 function removeStudentInput(index) {
     const container = document.getElementById('studentInputs');
     const rows = container.querySelectorAll('.student-input-row');
     
-    if (rows.length <= 2) {
+    if (rows.length <= MIN_NUM) {
         showError(t.minStudents);
         return;
     }
@@ -545,7 +555,7 @@ async function compareStudents() {
         }
     }
     
-    if (selectedStudents.length < 2) {
+    if (selectedStudents.length < MIN_NUM) {
         document.getElementById('scoresSection').classList.add('hidden');
         document.getElementById('chartSection').classList.add('hidden');
         return;
@@ -668,7 +678,7 @@ function createPerformanceChart() {
         performances.sort((a, b) => a.date - b.date);
         
         return {
-            name: student.enname,
+            name: IS_ARABIC ? student.arname : student.enname,
             color: STUDENT_COLORS[index],
             performances: performances
         };
