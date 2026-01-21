@@ -249,7 +249,7 @@ layout: default
     </div>
 </div>
 <div class="row mt-4">
-    <div class="col-md-6 col-sm-12">
+    <div class="col-12">
         <div id="scoresSection" class="hidden">
             <h2>النتائج التراكمية</h2>
             <h6>تجمع كل الإنجازات بناءً على الجدول</h6>
@@ -258,13 +258,19 @@ layout: default
                     <tr>
                         <th>الطالب</th>
                         <th>النتيجة التراكمية</th>
+                        <th>عدد المسائل</th>
+                        <th>100#</th>
+                        <th>0#</th>
+                        <th>أعلى نتيجة#</th>
                     </tr>
                 </thead>
                 <tbody id="scoresTableBody"></tbody>
             </table>
         </div>
     </div>
-    <div class="col-md-6 col-sm-12">
+</div>
+<div class="row mt-4">
+    <div class="col-12">
         <div id="chartSection" class="hidden">
             <h2>الأداء عبر الوقت</h2>
             <div class="chart-container">
@@ -303,7 +309,7 @@ layout: default
     </div>
 </div>
 <div class="row mt-4">
-    <div class="col-md-6 col-sm-12">
+    <div class="col-12">
         <div id="scoresSection" class="hidden">
             <h2>Cumulative Scores</h2>
             <table class="scores-table" id="scoresTable">
@@ -311,13 +317,19 @@ layout: default
                     <tr>
                         <th>Student</th>
                         <th>Cumulative Score</th>
+                        <th>Tasks Count</th>
+                        <th>100#</th>
+                        <th>0#</th>
+                        <th>Max Score#</th>
                     </tr>
                 </thead>
                 <tbody id="scoresTableBody"></tbody>
             </table>
         </div>
     </div>
-    <div class="col-md-6 col-sm-12">
+</div>
+<div class="row mt-4">
+    <div class="col-12">
         <div id="chartSection" class="hidden">
             <h2>Performance Over Time</h2>
             <div class="chart-container">
@@ -325,8 +337,8 @@ layout: default
             </div>
         </div>
     </div>
-    {% endif %}
 </div>
+{% endif %}
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script>
@@ -595,8 +607,28 @@ function updateScores() {
     if (selectedStudents.length === 0) return;
     
     const weights = getWeights();
+    
+    // First, identify common exams where ALL selected students participated
+    const commonExams = [];
+    Object.entries(allExams).forEach(([examId, exam]) => {
+        const allParticipated = selectedStudents.every(student => {
+            const studentId = student.iid.toString();
+            return exam.participants && exam.participants[studentId];
+        });
+        
+        if (allParticipated) {
+            commonExams.push(examId);
+        }
+    });
+    
     const scores = selectedStudents.map((student, index) => {
         let totalScore = 0;
+        let taskCount = 0;
+        let perfect100 = 0;
+        let zeroScore = 0;
+        let maxScoreCount = 0;
+        
+        // Calculate olympiad scores
         allParticipations.forEach(participation => {
             const studentId = student.iid.toString();
             const olympiadId = participation.name;
@@ -613,10 +645,41 @@ function updateScores() {
             }
         });
         
+        // Calculate exam task statistics - ONLY for common exams
+        commonExams.forEach(examId => {
+            const exam = allExams[examId];
+            const studentId = student.iid.toString();
+            const studentScores = exam.participants[studentId];
+            
+            studentScores.forEach((score, taskIndex) => {
+                taskCount++;
+                
+                // Check for perfect score (100)
+                if (score === 100) perfect100++;
+                
+                // Check for zero score
+                if (score === 0) zeroScore++;
+                
+                // Check if this is the max score for this task among all selected students
+                const maxScoreInTask = Math.max(
+                    ...selectedStudents.map(s => {
+                        const sId = s.iid.toString();
+                        return exam.participants[sId][taskIndex] || 0;
+                    })
+                );
+                
+                if (score === maxScoreInTask && score > 0) maxScoreCount++;
+            });
+        });
+        
         return {
             name: IS_ARABIC ? student.arname : student.enname,
             score: totalScore,
-            color: STUDENT_COLORS[index]
+            color: STUDENT_COLORS[index],
+            taskCount,
+            perfect100,
+            zeroScore,
+            maxScoreCount
         };
     });
     
@@ -632,6 +695,10 @@ function updateScores() {
                 </div>
             </td>
             <td>${s.score.toFixed(1)}</td>
+            <td>${s.taskCount}</td>
+            <td>${s.perfect100}</td>
+            <td>${s.zeroScore}</td>
+            <td>${s.maxScoreCount}</td>
         </tr>
     `).join('');
 }
