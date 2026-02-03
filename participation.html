@@ -63,8 +63,8 @@ layout: default
                         <td style="background-color: inherit;">{{ page.scores[uid][p] }}</th>
                         {% assign sum = sum | plus: page.scores[uid][p]  %}
                         {% endfor %}
-                    {% endif %}
                     <td style="background-color: inherit;"><b>{{ sum | round: 2 }}</b></td>
+                    {% endif %}
                 </tr>
                 {% endfor %}
             </tbody>
