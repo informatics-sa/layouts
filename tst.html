@@ -89,9 +89,10 @@ layout: default
                 <tbody>
                     {% for j in val.lists %}
                     {% assign uid = j[0] %} 
-                    {% assign res = j[1] %}
+                    {% assign res = j[1].grades %}
+                    {% assign bgc = j[1].background_color %}
 
-                    <tr {% if forloop.index <= val.participants_count %} style="background-color: #82f482 !important;" {% endif %}>
+                    <tr {% if bgc != null %} style="background-color: #{{ bgc }} !important;" {% endif %}>
                         <td style="background-color: inherit;">{{ forloop.index }}</td>
                         <td style="background-color: inherit;">
                             <a href="{% if page.lang != site.data.build.primary_lang %}/{{ page.lang }}{% endif %}/members/{{ j[0] }}">{{ page.names[uid] }}</a>
