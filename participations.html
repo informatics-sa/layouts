@@ -86,23 +86,6 @@ function refresh_tags() {
         return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     }
     
-    // Helper function to parse date string (format: YYYY/M/D)
-    function parseDate(dateStr) {
-        if (!dateStr) return null;
-        
-        // Parse YYYY/M/D format
-        const parts = dateStr.split('/');
-        if (parts.length !== 3) return null;
-        
-        const year = parseInt(parts[0], 10);
-        const month = parseInt(parts[1], 10) - 1; // JavaScript months are 0-based
-        const day = parseInt(parts[2], 10);
-        
-        const parsedDate = new Date(year, month, day);
-        
-        return isNaN(parsedDate.getTime()) ? null : parsedDate;
-    }
-    
     // Helper function to create badge HTML
     function createBadge(text, type = 'info') {
         const badgeClass = type === 'warning' ? 'bg-warning' : 
@@ -138,8 +121,8 @@ function refresh_tags() {
         const endDateStr = endElement.value;
         const awards = awardsElement.textContent.trim();
         
-        const startDate = parseDate(startDateStr);
-        const endDate = parseDate(endDateStr);
+        const startDate = new Date(startDateStr);
+        const endDate = new Date(endDateStr);
         
         if (!startDate || !endDate) return;
         
